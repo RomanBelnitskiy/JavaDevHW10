@@ -7,6 +7,7 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Parameter;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Entity
 @Immutable
@@ -31,13 +32,13 @@ public class Ticket {
     private OffsetDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "client_id")
+    @JoinColumn(name = "client_id", nullable = false)
     private Client client;
     @ManyToOne
-    @JoinColumn(name = "from_planet_id")
+    @JoinColumn(name = "from_planet_id", nullable = false)
     private Planet fromPlanet;
     @ManyToOne
-    @JoinColumn(name = "to_planet_id")
+    @JoinColumn(name = "to_planet_id", nullable = false)
     private Planet toPlanet;
 
     protected Ticket() {
@@ -67,6 +68,28 @@ public class Ticket {
 
     public Client getClient() {
         return client;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Ticket ticket = (Ticket) o;
+
+        if (!Objects.equals(id, ticket.id)) return false;
+        if (!Objects.equals(createdAt, ticket.createdAt)) return false;
+        if (!fromPlanet.equals(ticket.fromPlanet)) return false;
+        return toPlanet.equals(ticket.toPlanet);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
+        result = 31 * result + fromPlanet.hashCode();
+        result = 31 * result + toPlanet.hashCode();
+        return result;
     }
 
     @Override

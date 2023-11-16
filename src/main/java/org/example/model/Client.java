@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "clients")
 public class Client {
@@ -22,6 +26,12 @@ public class Client {
     @Column(length = 200, nullable = false)
     private String name;
 
+    @OneToMany(
+            mappedBy = "client",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE},
+            fetch = FetchType.EAGER)
+    private Set<Ticket> tickets = new HashSet<>();
+
     public Client() {
     }
 
@@ -39,6 +49,15 @@ public class Client {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<Ticket> getTickets() {
+        return Collections.unmodifiableSet(tickets);
+    }
+
+    public void addTicket(Planet from, Planet to) {
+        Ticket ticket = new Ticket(this, from, to);
+        tickets.add(ticket);
     }
 
     @Override

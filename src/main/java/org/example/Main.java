@@ -22,6 +22,12 @@ public class Main {
 
         // Create new client
         Client client = clientService.create("Froot");
+        Planet earth = new PlanetService().getById("EARTH");
+        Planet moon = new PlanetService().getById("MOON");
+        client.addTicket(earth, moon);
+        clientService.update(client);
+        client.addTicket(moon, earth);
+        clientService.update(client);
         System.out.println("Saved client = " + client);
 
         // Update client
@@ -31,6 +37,9 @@ public class Main {
         // Getting client by id
         Client clientFromDB = clientService.getById(client.getId());
         System.out.println("Client after update = " + clientFromDB);
+
+        // Show client tickets
+        clientFromDB.getTickets().forEach(System.out::println);
 
         // Delete client
         clientService.delete(clientFromDB);
